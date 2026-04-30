@@ -1,4 +1,6 @@
-﻿namespace GhostSpectator
+﻿using LabApi.Events.Handlers;
+
+namespace GhostSpectator
 {
     using System;
     using Exiled.API.Enums;
@@ -96,7 +98,7 @@
             PlayerHandler.InteractingShootingTarget += Handler.GenericGhostDisallow;
             PlayerHandler.IntercomSpeaking += Handler.GenericGhostDisallow;
             PlayerHandler.OpeningGenerator += Handler.GenericGhostDisallow;
-            PlayerHandler.PlayerDamageWindow += Handler.GenericGhostDisallow;
+            PlayerHandler.DamagingWindow += Handler.GenericGhostDisallow;
             PlayerHandler.PickingUpItem += Handler.GenericGhostDisallow;
             PlayerHandler.ReloadingWeapon += Handler.GenericGhostDisallow;
             PlayerHandler.RemovingHandcuffs += Handler.GenericGhostDisallow;
@@ -104,6 +106,7 @@
             PlayerHandler.Shooting += Handler.GenericGhostDisallow;
             PlayerHandler.TriggeringTesla += Handler.GenericGhostDisallow;
             PlayerHandler.UnlockingGenerator += Handler.GenericGhostDisallow;
+            ServerEvents.WaveRespawning += Handler.AllowGoesToSpawn;
 
             WarheadHandler.ChangingLeverStatus += Handler.GenericGhostDisallow;
             WarheadHandler.Starting += Handler.GenericGhostDisallow;
@@ -145,6 +148,7 @@
 
             ServerHandler.RestartingRound -= Handler.OnRestartingRound;
             ServerHandler.RespawningTeam -= Handler.OnRespawningTeam;
+            ServerEvents.WaveRespawning -= Handler.AllowGoesToSpawn;
             WarheadHandler.Detonated -= Handler.OnDetonated;
 
             // Interaction Disabling
@@ -164,7 +168,7 @@
             PlayerHandler.InteractingShootingTarget -= Handler.GenericGhostDisallow;
             PlayerHandler.IntercomSpeaking -= Handler.GenericGhostDisallow;
             PlayerHandler.OpeningGenerator -= Handler.GenericGhostDisallow;
-            PlayerHandler.PlayerDamageWindow -= Handler.GenericGhostDisallow;
+            PlayerHandler.DamagingWindow -= Handler.GenericGhostDisallow;
             PlayerHandler.PickingUpItem -= Handler.GenericGhostDisallow;
             PlayerHandler.ReloadingWeapon -= Handler.GenericGhostDisallow;
             PlayerHandler.RemovingHandcuffs -= Handler.GenericGhostDisallow;

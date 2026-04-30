@@ -1,4 +1,11 @@
-﻿namespace GhostSpectator
+﻿// todo> add integration with token system for AllowGoesToSpawn
+// todo> add dead people speak for... dead people
+// todo> stop 1344(goggles) from seeing ghosts
+// todo> see if can select tp targets
+// todo> change GhostBroadcast to be rp friendly
+using LabApi.Events.Arguments.ServerEvents;
+
+namespace GhostSpectator
 {
     using System;
     using Exiled.API.Features;
@@ -96,7 +103,7 @@
                     {
                         Timing.CallDelayed(0.5f, () =>
                         {
-                            Scp049ResurrectAbility.DeadZombies.Add(ev.Player.ReferenceHub.netId);
+                            Scp049ResurrectAbility.DeadZombies.Add(ev.Player.ReferenceHub.Network_playerId);
                         });
                     }
                 }
@@ -124,7 +131,7 @@
 
         public void OnChangingItem(ChangingItemEventArgs ev)
         {
-            if (API.IsGhost(ev.Player) && ev.IsAllowed && ev.NewItem is not null && ev.NewItem.Type is ItemType.Coin && CoinHandler.Coins.TryGetValue(ev.NewItem.Serial, out GhostCoinType type))
+            if (API.IsGhost(ev.Player) && ev.IsAllowed && ev.Item is not null && ev.Item.Type is ItemType.Coin && CoinHandler.Coins.TryGetValue(ev.Item.Serial, out GhostCoinType type))
             {
                 var translation = CoinHandler.CoinTranslation[type];
                 ev.Player.ShowHint(translation, 5f);
