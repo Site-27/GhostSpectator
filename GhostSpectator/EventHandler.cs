@@ -103,7 +103,7 @@ namespace GhostSpectator
                     {
                         Timing.CallDelayed(0.5f, () =>
                         {
-                            Scp049ResurrectAbility.DeadZombies.Add(ev.Player.ReferenceHub.Network_playerId);
+                            Scp049ResurrectAbility.DeadZombies.Add(LabApi.Features.Wrappers.Player.Get(ev.Player.ReferenceHub).ReferenceHub.netId);
                         });
                     }
                 }
