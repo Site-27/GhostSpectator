@@ -172,7 +172,7 @@
             if (!ply.Role.Is(out FpcRole fpcRole))
                 return true;
 
-            fpcRole.IsNoclipEnabled = false;
+            ply.IsNoclipEnabled = false;
 
             return true;
         }

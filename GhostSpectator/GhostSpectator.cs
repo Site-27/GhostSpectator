@@ -1,5 +1,4 @@
-﻿using LabApi.Events.Handlers;
-
+﻿
 namespace GhostSpectator
 {
     using System;
@@ -13,35 +12,36 @@ namespace GhostSpectator
     using WarheadHandler = Exiled.Events.Handlers.Warhead;
 
     /// <inheritdoc/>
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class GhostSpectator : Plugin<Config, Translation>
     {
-        private static Harmony harmony;
-        private static EventHandler handler;
+        private static Harmony? _harmony;
+        private static EventHandler? _handler;
 
         /// <summary>
         /// Gets the singleton of the plugin.
         /// </summary>
-        public static GhostSpectator Singleton { get; private set; }
+        public static GhostSpectator? Singleton { get; private set; }
 
         /// <summary>
         /// Gets the plugin's configs.
         /// </summary>
-        public static Config Configs => Singleton?.Config;
+        public static Config Configs => Singleton?.Config!;
 
         /// <summary>
         /// Gets the plugin's translations.
         /// </summary>
-        public static Translation Translations => Singleton.Translation;
+        public static Translation Translations => Singleton?.Translation!;
 
         /// <summary>
         /// Gets the plugin's <see cref="EventHandler"/>.
         /// </summary>
-        public static EventHandler Handler => handler;
+        public static EventHandler? Handler => _handler;
 
         /// <summary>
         /// Gets the plugin's <see cref="HarmonyLib.Harmony"/> instance.
         /// </summary>
-        public static Harmony Harmony => harmony;
+        public static Harmony? Harmony => _harmony;
 
         /// <inheritdoc/>
         public override string Name => "GhostSpectator";
@@ -65,10 +65,10 @@ namespace GhostSpectator
 
             // Create Classes
             Singleton = this;
-            handler = new EventHandler();
+            _handler = new EventHandler();
 
             // Important Events
-            PlayerHandler.ChangingRole += Handler.OnChangingRole;
+            PlayerHandler.ChangingRole += Handler!.OnChangingRole;
             PlayerHandler.Dying += Handler.OnDying;
             PlayerHandler.Died += Handler.OnDied;
             PlayerHandler.Spawned += Handler.OnSpawned;
@@ -106,7 +106,6 @@ namespace GhostSpectator
             PlayerHandler.Shooting += Handler.GenericGhostDisallow;
             PlayerHandler.TriggeringTesla += Handler.GenericGhostDisallow;
             PlayerHandler.UnlockingGenerator += Handler.GenericGhostDisallow;
-            ServerEvents.WaveRespawning += Handler.AllowGoesToSpawn;
 
             WarheadHandler.ChangingLeverStatus += Handler.GenericGhostDisallow;
             WarheadHandler.Starting += Handler.GenericGhostDisallow;
@@ -122,8 +121,8 @@ namespace GhostSpectator
             // Patching
             try
             {
-                harmony = new Harmony(nameof(GhostSpectator).ToLowerInvariant() + "-" + DateTime.UtcNow.Ticks);
-                harmony.PatchAll();
+                _harmony = new Harmony(nameof(GhostSpectator).ToLowerInvariant() + "-" + DateTime.UtcNow.Ticks);
+                _harmony.PatchAll();
 
                 Log.Info("Harmony patching complete.");
             }
@@ -137,7 +136,7 @@ namespace GhostSpectator
         public override void OnDisabled()
         {
             // Important Events
-            PlayerHandler.ChangingRole -= Handler.OnChangingRole;
+            PlayerHandler.ChangingRole -= Handler!.OnChangingRole;
             PlayerHandler.Dying -= Handler.OnDying;
             PlayerHandler.Died -= Handler.OnDied;
             PlayerHandler.Spawned -= Handler.OnSpawned;
@@ -148,7 +147,6 @@ namespace GhostSpectator
 
             ServerHandler.RestartingRound -= Handler.OnRestartingRound;
             ServerHandler.RespawningTeam -= Handler.OnRespawningTeam;
-            ServerEvents.WaveRespawning -= Handler.AllowGoesToSpawn;
             WarheadHandler.Detonated -= Handler.OnDetonated;
 
             // Interaction Disabling
@@ -189,12 +187,12 @@ namespace GhostSpectator
             Exiled.Events.Handlers.Scp096.AddingTarget -= Handler.OnAddingTarget;
 
             // Unpatch
-            Harmony.UnpatchAll(Harmony.Id);
+            Harmony?.UnpatchAll(Harmony.Id);
 
             // Destroy Classes
             Singleton = null;
-            handler = null;
-            harmony = null;
+            _handler = null;
+            _harmony = null;
 
             base.OnDisabled();
         }

@@ -17,7 +17,7 @@
         /// <summary>
         /// Teleport to a random SCP.
         /// </summary>
-        TeleportSCP,
+        TeleportScp,
 
         /// <summary>
         /// Teleport to a random human.
@@ -61,7 +61,7 @@
         public static ReadOnlyDictionary<GhostCoinType, string> CoinTranslation { get; } = new(new Dictionary<GhostCoinType, string>
         {
             { GhostCoinType.TeleportHuman, GhostSpectator.Translations.HumanTeleportCoin },
-            { GhostCoinType.TeleportSCP, GhostSpectator.Translations.ScpTeleportCoin },
+            { GhostCoinType.TeleportScp, GhostSpectator.Translations.ScpTeleportCoin },
             { GhostCoinType.TeleportGhost, GhostSpectator.Translations.GhostTeleportCoin },
             { GhostCoinType.TeleportRoom, GhostSpectator.Translations.RoomTeleportCoin },
             { GhostCoinType.TeleportSurface, GhostSpectator.Translations.SurfaceTeleportCoin },
@@ -97,7 +97,7 @@
         /// <param name="ply">The player.</param>
         /// <param name="coin">The coin being flipped.</param>
         /// <returns>True if successful.</returns>
-        public static bool Execute(Player ply, Item coin)
+        public static bool Execute(Player? ply, Item? coin)
         {
             if (ply is null || coin is null)
                 return false;
@@ -105,12 +105,12 @@
             if (!Coins.TryGetValue(coin.Serial, out GhostCoinType type))
                 return false;
 
-            List<Player> list = null;
+            List<Player>? list = null;
             if (type is GhostCoinType.TeleportHuman)
             {
                 list = Player.Get(pl => pl.IsHuman && !API.IsGhost(pl)).ToList();
             }
-            else if (type is GhostCoinType.TeleportSCP)
+            else if (type is GhostCoinType.TeleportScp)
             {
                 list = Player.Get(pl => pl.IsScp && !API.IsGhost(pl)).ToList();
             }
@@ -148,7 +148,7 @@
             }
             else if (type is GhostCoinType.SetToSpectator)
             {
-                ply.Role.Set(PlayerRoles.RoleTypeId.Spectator, SpawnReason.ForceClass);
+                ply.Role.Set(PlayerRoles.RoleTypeId.Spectator);
                 return false;
             }
 
@@ -166,7 +166,7 @@
                 ply.ShowHint(GhostSpectator.Translations.NoPlayerToTeleport);
             }
 
-            return list.Count > 0;
+            return list?.Count > 0;
         }
     }
 }

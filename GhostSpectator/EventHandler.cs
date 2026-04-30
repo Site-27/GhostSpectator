@@ -1,9 +1,8 @@
-﻿// todo> add integration with token system for AllowGoesToSpawn
-// todo> add dead people speak for... dead people
-// todo> stop 1344(goggles) from seeing ghosts
-// todo> see if can select tp targets
-// todo> change GhostBroadcast to be rp friendly
-using LabApi.Events.Arguments.ServerEvents;
+﻿// todo> add dead people speak for... dead people (event? handler)
+// todo> stop 1344(goggles) from seeing ghosts (event handler)
+// todo> see if can select tp targets (coin handler)
+
+
 
 namespace GhostSpectator
 {
@@ -49,8 +48,7 @@ namespace GhostSpectator
             }
             else
             {
-                if (!fpcRole.IsInvisibleFor.Contains(ply))
-                    fpcRole.IsInvisibleFor.Add(ply);
+                fpcRole.IsInvisibleFor.Add(ply);
             }
         }
 
@@ -103,7 +101,7 @@ namespace GhostSpectator
                     {
                         Timing.CallDelayed(0.5f, () =>
                         {
-                            Scp049ResurrectAbility.DeadZombies.Add(LabApi.Features.Wrappers.Player.Get(ev.Player.ReferenceHub).ReferenceHub.netId);
+                            Scp049ResurrectAbility.DeadZombies.Add(ev.Player.ReferenceHub.netId);
                         });
                     }
                 }
@@ -112,7 +110,7 @@ namespace GhostSpectator
 
         public void OnSpawned(SpawnedEventArgs ev)
         {
-            if (ev.Player is null || ev.Player.Role.SpawnReason is PlayerRoles.RoleChangeReason.Destroyed)
+            if (ev.Player is null || ev.Player.Role.SpawnReason is RoleChangeReason.Destroyed)
                 return;
 
             if (API.IsBecomingGhost.Contains(ev.Player) && ev.Player.Role.Type is RoleTypeId.Tutorial)
@@ -131,11 +129,10 @@ namespace GhostSpectator
 
         public void OnChangingItem(ChangingItemEventArgs ev)
         {
-            if (API.IsGhost(ev.Player) && ev.IsAllowed && ev.Item is not null && ev.Item.Type is ItemType.Coin && CoinHandler.Coins.TryGetValue(ev.Item.Serial, out GhostCoinType type))
-            {
-                var translation = CoinHandler.CoinTranslation[type];
-                ev.Player.ShowHint(translation, 5f);
-            }
+            if (!API.IsGhost(ev.Player) || ev is not { IsAllowed: true, Item.Type: ItemType.Coin } ||
+                !CoinHandler.Coins.TryGetValue(ev.Item.Serial, out var type)) return;
+            var translation = CoinHandler.CoinTranslation[type];
+            ev.Player.ShowHint(translation, 5f);
         }
 
         public void OnFlippingCoin(FlippingCoinEventArgs ev)
